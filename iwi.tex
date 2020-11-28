@@ -1,0 +1,465 @@
+\documentclass[12pt, a4paper, oneside, titlepage]{book}
+
+% Allgemein: Times New Roman 
+\usepackage{mathptmx}
+% Überschriften: Helvetica (ähnlich Arial) 
+\usepackage[scaled=0.9]{helvet}
+% Quellcode: Courier
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{blindtext}
+\usepackage{rotating}
+
+% Deutsch als Hauptsprache, Englisch als Zweitsprache
+\usepackage[
+  shorthands=off,
+  english,
+  main=$if(language)$$language$$else$ngerman$endif$
+]{babel}
+\usepackage{csquotes}
+$if(babel-newcommands)$
+  $babel-newcommands$
+$endif$
+
+$if(toc-title)$
+% Inhaltsverzeichnis soll "Gliederung" heißen
+\addto\captions$if(language)$$language$$else$ngerman$endif${
+  \renewcommand{\contentsname}{$toc-title$}
+}
+$endif$
+
+\addto\extrasngerman{
+  \def\chapterautorefname{Kapitel}
+  \def\sectionautorefname{Abschnitt}
+  \def\figureautorefname{Abbildung}
+  \def\tableautorefname{Tabelle}
+  \def\appendixautorefname{Anhang}
+  \def\pageautorefname{Seite}
+}
+
+% 1,5-facher Zeilenabstand wie in Word
+% https://tex.stackexchange.com/questions/65849/confusion-onehalfspacing-vs-spacing-vs-word-vs-the-world
+\linespread{1.4}
+
+$if(linestretch)$
+  \setstretch{$linestretch$}
+$endif$
+
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{eurosym}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+$for(fontfamilies)$
+  \newfontfamily{$fontfamilies.name$}[$fontfamilies.options$]{$fontfamilies.font$}
+$endfor$
+  \newcommand{\euro}{€}
+$if(mainfont)$
+    \setmainfont[$for(mainfontoptions)$$mainfontoptions$$sep$,$endfor$]{$mainfont$}
+$endif$
+$if(sansfont)$
+    \setsansfont[$for(sansfontoptions)$$sansfontoptions$$sep$,$endfor$]{$sansfont$}
+$endif$
+$if(monofont)$
+    \setmonofont[Mapping=tex-ansi$if(monofontoptions)$,$for(monofontoptions)$$monofontoptions$$sep$,$endfor$$endif$]{$monofont$}
+$endif$
+$if(mathfont)$
+    \setmathfont(Digits,Latin,Greek)[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
+$endif$
+$if(CJKmainfont)$
+    \usepackage{xeCJK}
+    \setCJKmainfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
+$endif$
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+
+% Überschriften formatieren
+% Sans-Serif, fett, keine Unterstreichung
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\bfseries\large}
+\chaptertitlefont{\normalsize}
+
+% Remove "Chapter n" from chapter heading
+\usepackage[pagestyles]{titlesec}
+% "1 Grundlagen" large == 14 pt
+\titleformat{\chapter}[block]{\sffamily\bfseries\large}{\thechapter}{12pt}{}
+% "1.2 Details" normalsize == 12 pt
+\titleformat{\section}[block]{\sffamily\bfseries\normalsize}{\thesection}{12pt}{}
+\titleformat{\subsection}[block]{\sffamily\bfseries\normalsize}{\thesubsection}{12pt}{}
+% Die {12pt}{} beziehen sich auf einen horizontalen Abstand
+
+% Remove space around chapter
+\titlespacing*{\chapter}{0pt}{-28pt}{0pt}
+% Remove space around section
+\titlespacing*{\section}{0pt}{12pt}{0pt}
+
+$if(verbatim-in-note)$
+  \usepackage{fancyvrb}
+$endif$
+
+\usepackage[unicode=true]{hyperref}
+% caption makes hyperref point to the top of the figure instead of to the caption.
+\usepackage{caption}
+
+$if(colorlinks)$
+  \PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
+$endif$
+
+\hypersetup{
+$if(title-meta)$
+            pdftitle={$title-meta$},
+$endif$
+$if(author-meta)$
+            pdfauthor={$author-meta$},
+$endif$
+$if(keywords)$
+            pdfkeywords={$for(keywords)$$keywords$$sep$, $endfor$},
+$endif$
+$if(colorlinks)$
+            colorlinks=true,
+            linkcolor=$if(linkcolor)$$linkcolor$$else$Maroon$endif$,
+            citecolor=$if(citecolor)$$citecolor$$else$Blue$endif$,
+            urlcolor=$if(urlcolor)$$urlcolor$$else$Blue$endif$,
+$else$
+            pdfborder={0 0 0},
+$endif$
+            breaklinks=true}
+
+\urlstyle{same}  % don't use monospace font for urls
+
+$if(verbatim-in-note)$
+\VerbatimFootnotes % allows verbatim text in footnotes
+$endif$
+
+% Seitenformat; Abstände zu den Rändern
+\usepackage[top=25mm, right=25mm, bottom=15mm, left=30mm]{geometry}
+
+%Import the biblatex package and sets a bibliography and citation styles
+\usepackage[
+    backend=biber,
+    style=apa,
+    labeldate=year,
+    useprefix=false % Erklärung weiter unten
+    % citestyle=authoryear-ibid, % überschreibt "style"
+    % bibstyle=authoryear,       %     --- // ---
+]{biblatex}
+
+$if(bibliography)$
+  $if(biblio-title)$
+    $if(book-class)$
+      \renewcommand\bibname{$biblio-title$}
+    $else$
+      \renewcommand\refname{$biblio-title$}
+    $endif$
+  $endif$
+  \addbibresource{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$endif$
+
+% --- https://tex.stackexchange.com/questions/226893/biblatex-handling-of-dutch-van-prefix ---
+% Zusammen mit der Option useprefix=false für Biblatex verwenden.
+% Korrekte Zitierung von Adelszusätzen "von", "vom", "van", ...
+\renewbibmacro*{begentry}{\midsentence}
+\makeatletter
+\AtBeginDocument{\toggletrue{blx@useprefix}}
+\makeatother
+
+% Abkürzungen und Abkürzungsverzeichnis
+\usepackage[printonlyused]{acronym}
+
+% PDFs einbinden
+\usepackage{pdfpages}
+
+$if(listings)$
+  \usepackage{listings}
+$endif$
+
+$if(lhs)$
+  \lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
+$endif$
+
+$if(highlighting-macros)$
+  $highlighting-macros$
+$endif$
+
+\usepackage{longtable,booktabs}
+% Space between table rows
+\renewcommand{\arraystretch}{1.2}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{long table}}{}
+
+$if(graphics)$
+  \usepackage{graphicx,grffile}
+  \makeatletter
+  \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+  \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+  \makeatother
+  % Scale images if necessary, so that they will not overflow the page
+  % margins by default, and it is still possible to overwrite the defaults
+  % using explicit options in \includegraphics[width, height, ...]{}
+  \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+$endif$
+
+$if(links-as-notes)$
+  % Make links footnotes instead of hotlinks:
+  \renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+$endif$
+
+$if(strikeout)$
+  \usepackage[normalem]{ulem}
+  % avoid problems with \sout in headers with hyperref:
+  \pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+$endif$
+
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+$if(numbersections)$
+  \setcounter{secnumdepth}{$if(secnumdepth)$$secnumdepth$$else$5$endif$}
+$else$
+  \setcounter{secnumdepth}{0}
+$endif$
+
+$if(subparagraph)$
+$else$
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+$endif$
+
+$if(dir)$
+\ifxetex
+  % load bidi as late as possible as it modifies e.g. graphicx
+  $if(latex-dir-rtl)$
+  \usepackage[RTLdocument]{bidi}
+  $else$
+  \usepackage{bidi}
+  $endif$
+\fi
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \TeXXeTstate=1
+  \newcommand{\RL}[1]{\beginR #1\endR}
+  \newcommand{\LR}[1]{\beginL #1\endL}
+  \newenvironment{RTL}{\beginR}{\endR}
+  \newenvironment{LTR}{\beginL}{\endL}
+\fi
+$endif$
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+$for(header-includes)$
+  $header-includes$
+$endfor$
+
+% Seitennummer oben rechts
+\usepackage{fancyhdr}
+% \pagestyle{headings}
+\pagestyle{fancy} % eigener Seitenstil
+\fancyhf{} % alle Kopf- und Fußzeilenfelder bereinigen
+\fancyhead[L]{\nouppercase{\leftmark}} %Kopfzeile links
+\fancyhead[R]{\thepage} % Kopfzeile rechts
+% Kopfzeile soll nur den Titel des Kapitels enthalten, nicht "Kapitel 2".
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+\fancypagestyle{plain}{%
+  \fancyhead{} % get rid of headers
+  \renewcommand{\headrulewidth}{0pt} % and the line
+}
+
+% fancyhdr uses pagestyle{plain} (pagnumber in footer) on TOC and the first page of a chapter
+% the following two lines put page numbers to the top right always.
+\usepackage{etoolbox}
+\patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
+% Reset acronyms before each chapter. This way the \acf{} form will be used for 
+% the first occurence in a chapter.
+\preto\chapter\acresetall
+
+% Normaler Abstand zwischen Worten: 0.5em
+\fontdimen2\font=0.5em
+% Normaler Abstand darf maximal um 0.25em erhöht werden
+\fontdimen3\font=0.25em
+% Normaler Abstand darf maximal um 0.25em verringert werden
+\fontdimen4\font=0.25em
+
+% Command \placeanddate produces "Leipzig, den 02.02.2020"
+% or just "02.02.2020" if place is undefined
+\newcommand{\placeanddate}{$if(place)$$place$, den $endif$$if(date)$$date$$else$\today$endif$}
+
+\begin{document}
+
+$if(title)$
+\begin{titlepage}
+  \noindent
+  Universität Leipzig\\
+  Wirtschaftswissenschaftliche Fakultät\\
+  Institut für Wirtschaftsinformatik\\
+  $if(professor)$$professor$\\$endif$
+  $if(assistant)$$assistant$\\$endif$
+  
+  \vfill
+  
+
+    \centering
+    Thema\\
+  {\fontfamily{phv}\selectfont % Titel in Helvetica (phv)
+    $if(title)$
+      {\Large\bfseries $title$ \par}
+      \vspace{1cm}
+    $endif$
+  } % Ende des Titels
+    $if(subtitle)$
+      {\large $subtitle$ \par}
+      \vspace{1.5cm}
+    $endif$
+
+
+  \vfill
+  \raggedright
+
+  \begin{flushleft}
+    \begin{tabular}{@{}ll}\\
+      $if(author)$Vorgelegt von: & \quad $for(author)$$author$$sep$ \and $endfor$\\$endif$
+      $if(matnr)$Matrikelnummer: & \quad $matnr$\\$endif$
+      $if(email)$E-Mail-Adresse: & \quad $email$\\$endif$
+      $if(phone)$Telefonnummer: & \quad $phone$\\$endif$
+      $if(address_line1)$Anschrift: & \quad $address_line1$ \\$endif$
+      $if(address_line2)$& \quad $address_line2$ \\$endif$
+    \end{tabular}
+  \end{flushleft}
+
+  \vspace{0.5cm}
+
+  \placeanddate\par
+\end{titlepage}
+$endif$
+
+$if(abstract)$
+  \pagenumbering{gobble}
+  \chapter*{Abstract}
+  \thispagestyle{plain}
+  $abstract$
+  \clearpage
+  \pagestyle{fancy}
+$endif$
+
+% Römische Seitenzahlen
+\frontmatter
+\pagenumbering{Roman}
+
+$for(include-before)$
+  $include-before$
+$endfor$
+
+$if(toc)$ {
+  % Inhaltsverzeichnis 
+  $if(colorlinks)$
+    \hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$black$endif$}
+  $endif$
+  \setcounter{tocdepth}{$toc-depth$}
+  \tableofcontents
+}
+$endif$
+
+$if(lot)$
+  % Tabellenverzeichnis 
+  \cleardoublepage
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\listtablename}
+  \listoftables
+$endif$
+
+$if(lof)$
+  % Abbildungsverzeichnis 
+  \cleardoublepage
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\listfigurename}
+  \listoffigures
+$endif$
+
+$if(loa)$
+% Abkürzungsverzeichnis
+\chapter{$if(loa-title)$$loa-title$$else$Abkürzungsverzeichnis$endif$}
+\input{Arbeit/acronyms.tex}
+$endif$
+
+% Arabische Seitenzahlen
+\mainmatter
+
+$body$
+
+% Ende des Buches
+\backmatter
+
+\pagenumbering{Roman} % Nummerierung (Römisch) wieder beginnen
+\setcounter{page}{5} % Continue page numbering from frontmatter
+\setcounter{figure}{0} \renewcommand{\thefigure}{A.\arabic{figure}} % Reset figure counter
+\setcounter{table}{0} \renewcommand{\thetable}{A.\arabic{table}} % Reset table counter
+
+$for(include-after)$
+  $include-after$
+$endfor$
+
+\printbibliography[heading=bibintoc]
+
+\chapter{Anhang}
+
+\setcounter{section}{0}% Equivalent to "letter O"
+\renewcommand{\thesection}{\Alph{section}}
+\input{Arbeit/anhang.tex}
+
+\clearpage
+\pagestyle{plain}
+
+% Erhrenwörtliche Erklärung
+% in markdown header `honesty: true` setzen
+$if(honesty)$
+  \newpage
+  \pagenumbering{gobble}
+  \chapter*{Ehrenwörtliche Erklärung}
+  Ich versichere, dass ich die Bachelorarbeit selbstständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe. Darüber hinaus versichere ich, dass die elektronische Version der Bachelorarbeit mit der gedruckten Version übereinstimmt.
+  \\
+  \\
+  \noindent
+  \placeanddate\newline
+  $if(author)$$for(author)$$author$$sep$ \and $endfor$\\$endif$\par
+$endif$
+
+% Selbständigkeitserklärung
+% in markdown header `independence: true` setzen
+$if(independence)$
+  \newpage
+  \pagenumbering{gobble}
+  \chapter*{Selbständigkeitserklärung}
+  Hiermit erkläre ich, die vorliegende Dissertation selbständig und ohne unzulässige fremde Hilfe, insbesondere ohne die Hilfe eines Promotionsberaters, angefertigt zu haben. Ich habe keine anderen als die angeführten Quellen und Hilfsmittel benutzt und sämtliche Textstellen, die wörtlich oder sinngemäß aus veröffentlichten oder unveröffentlichten Schriften entnommen wurden, und alle Angaben, die auf mündlichen Auskünften beruhen, als solche kenntlich gemacht. Ebenfalls sind alle von anderen Personen bereitgestellten Materialien oder erbrachten Dienstleistungen als solche gekennzeichnet.
+  \\
+  \\
+  \noindent
+  \placeanddate\newline
+  $if(author)$$for(author)$$author$$sep$ \and $endfor$\\$endif$\par
+$endif$
+
+\end{document}

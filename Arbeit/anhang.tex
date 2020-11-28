@@ -1,0 +1,12 @@
+% In dieser Datei wird der Anhang definiert.
+% Da im Anhang gerne PDFs, Tabellen, etc. eingebunden werden ist dieser Teil in
+% LaTeX gehalten.
+
+\section{Dummy PDF}\label{sec:dummy-pdf}
+
+Aus technischen Gründen beginnt dieser Anhang auf der nächsten Seite.
+
+\includepdf[
+    pages=-,
+    pagecommand={\thispagestyle{fancy}}
+]{dummy.pdf}

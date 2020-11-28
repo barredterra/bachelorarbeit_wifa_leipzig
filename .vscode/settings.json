@@ -1,0 +1,16 @@
+{
+    "spellright.language": [
+        "de",
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ],
+    "spellright.ignoreRegExps": [
+        "/\\\\.*?[\\n\\t ]/g",
+        "/\\[.*@.*\\]/g"
+    ],
+    "python.pythonPath": "env/bin/python"
+}
